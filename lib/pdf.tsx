@@ -1,7 +1,7 @@
 import React from 'react'
 import { Document, Page, Text, View, StyleSheet, renderToBuffer } from '@react-pdf/renderer'
 import type { DiagnosisInput, DiagnosisResult } from '@/types'
-import { SCORE_FORMULA_DISPLAY, SCORE_WEIGHTS, SCORE_LABELS, DISCLAIMER } from '@/types'
+import { SCORE_FORMULA_DISPLAY, SCORE_WEIGHTS_DEFAULT, SCORE_LABELS, DISCLAIMER } from '@/types'
 
 const styles = StyleSheet.create({
   page: { fontFamily: 'Helvetica', fontSize: 10, paddingTop: 40, paddingBottom: 50, paddingHorizontal: 44, backgroundColor: '#FAFAFA', color: '#1a1a1a' },
@@ -117,7 +117,7 @@ export function generateDiagnosisPdf(
           {scoreOrder.map(key => {
             const bd = result.scoreBreakdown[key]
             const color = SCORE_COLORS_PDF[key] || '#888'
-            const winfo = SCORE_WEIGHTS[key as keyof typeof SCORE_WEIGHTS]
+            const winfo = SCORE_WEIGHTS_DEFAULT[key as keyof typeof SCORE_WEIGHTS_DEFAULT]
             return (
               <View key={key} style={{ marginBottom: 12, padding: 8, backgroundColor: '#f9f9f9', borderRadius: 4 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
