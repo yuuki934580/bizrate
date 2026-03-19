@@ -167,7 +167,11 @@ export async function POST(req: NextRequest) {
     }
 
     // ── 診断実行 ──
-    const result = await runDiagnosis(input)
+    const result = await runDiagnosis({
+      ...input,
+      salesChannel: input.salesChannel || '',
+      businessModel: input.businessModel || '',
+    })
 
     // ── calculatedMetrics を計算してresultに付与 ──
     const s = result.scores
