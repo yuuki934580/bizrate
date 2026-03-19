@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
         realisticMonthlyRevenue: Math.round(cRealSales * cUserPrice),
         requiredFor30k: Math.ceil(30000 / cUserPrice),
       }
-      const cWeakness = (FIVE_AXES as string[]).map(key => ({
+      const cWeakness = ([...FIVE_AXES] as string[]).map(key => ({
         key, label: (SCORE_LABELS as any)[key] || key, score: (cs as any)[key],
         isWeakness: key === 'competition' || key === 'executionDifficulty'
           ? (cs as any)[key] > 60 : (cs as any)[key] < 50,
@@ -237,7 +237,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 弱点ランキング（スコアが低い順）
-    const weaknessRanking = (FIVE_AXES as string[]).map(key => ({
+    const weaknessRanking = ([...FIVE_AXES] as string[]).map(key => ({
       key,
       label: (SCORE_LABELS as any)[key] || key,
       score: (s as any)[key] as number,
