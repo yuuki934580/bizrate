@@ -167,11 +167,21 @@ export async function POST(req: NextRequest) {
     }
 
     // ── 診断実行 ──
-    const result = await runDiagnosis({
-      ...input,
-      salesChannel: input.salesChannel || '',
-      businessModel: input.businessModel || '',
-    })
+    const diagnosisInput = {
+      businessSummary: input.businessSummary,
+      targetCustomer:  input.valueProposition, // whoForをvaluePropositionから取得
+      valueProposition: input.valueProposition,
+      salesChannel:    input.salesChannel ?? '',
+      businessModel:   input.businessModel
+        ? input.businessModel.split(',').filter(Boolean)
+        : [],
+      currentPrice:    input.currentPrice,
+      initialBudget:   input.initialBudget,
+      weeklyHours:     input.weeklyHours,
+      canShowFace:     input.canShowFace,
+      canDoSales:      input.canDoSales,
+    }
+    const result = await runDiagnosis(diagnosisInput)
 
     // ── calculatedMetrics を計算してresultに付与 ──
     const s = result.scores
