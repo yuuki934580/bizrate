@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
 
     // クレジット消費
     if (userId) {
-      const cr = await consumeCredits(userId, CREDIT_COSTS.diagnose, 'pdf_generate')
+      const cr = await consumeCredits(userId, CREDIT_COSTS.diagnose, 'diagnose')
       if (!cr.success) {
         return NextResponse.json({
           success: false,
