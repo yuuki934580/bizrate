@@ -584,7 +584,7 @@ export default function Home() {
     businessSummary: string; whoFor: string; whatToSell: string
     differentiation?: string; salesChannel: string[]; businessModel: string[]
     currentPrice?: string; initialBudget?: string; weeklyHours?: string
-    canShowFace?: boolean; canDoSales?: boolean
+    canShowFace?: boolean; canDoSales?: boolean; guestId?: string
   }, pfid?: string) => {
     setError(null); setPhase('loading')
     let step = 0; setLoadingMsg(LOADING_STEPS[0])
