@@ -199,11 +199,11 @@ export async function mergeGuestToUser(
     .single()
 
   if (userUsage) {
-    // 両方あれば合算（上限はFREE_PER_DAY）
+    // 両方あれば合算（上限はFREE_TOTAL）
     await supabase
       .from('daily_free_usage')
       .update({
-        used_count: Math.min(FREE_PER_DAY, userUsage.used_count + guestUsage.used_count),
+        used_count: Math.min(FREE_TOTAL, userUsage.used_count + guestUsage.used_count),
         updated_at: new Date().toISOString(),
       })
       .eq('id', userUsage.id)
