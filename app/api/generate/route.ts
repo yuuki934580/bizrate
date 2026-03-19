@@ -55,6 +55,8 @@ export async function POST(req: NextRequest) {
     const userPriceRaw = input.currentPrice
       ? parseInt((input.currentPrice as string).replace(/[^0-9]/g, ''), 10)
       : null
+    // salesChannelStr をキャッシュブロックより前に定義
+    const salesChannelStr = (input.salesChannel as string) || ''
     const cached = noCache ? null : await findCachedDiagnosis(inputsHash)
     if (cached) {
       const cs = (cached.result as any).scores
@@ -178,7 +180,6 @@ export async function POST(req: NextRequest) {
     const monthly30kCalc = calcMonthly30k(actualPrice)
 
     // ── 流入数をチャネル基礎値 × 魅力度係数で算出 ──
-    const salesChannelStr = (input.salesChannel as string) || ''
     const channelBases: Record<string, number> = {
       'SNS': 300, 'Twitter': 300, 'Instagram': 300,
       'YouTube': 500,
