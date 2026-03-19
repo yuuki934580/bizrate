@@ -1,156 +1,59 @@
-<<<<<<< HEAD
-# NICHE RADAR — セットアップガイド
+# BizRate（ビジレート）
 
-生成AIで稼げるニッチを、根拠付きで5つ提示するWebアプリのMVPです。
-
-## 技術スタック
-
-| レイヤー | 技術 |
-|---------|------|
-| フロント | Next.js 14 (App Router) + TypeScript |
-| DB | Supabase (PostgreSQL + Auth + Storage) |
-| 決済 | Stripe Checkout（買い切り） |
-| LLM | OpenAI GPT-4o-mini |
-| PDF生成 | @react-pdf/renderer（サーバーサイド） |
+AIがビジネスアイデアを構造的に評価し、「売れる可能性」をスコア化するWebサービス。
 
 ---
 
-## ファイル構成
+## ■ 概要
 
-```
-niche-radar/
-├── app/
-│   ├── layout.tsx                # ルートレイアウト
-│   ├── page.tsx                  # メイン画面（入力→結果→購入）
-│   ├── purchase/success/page.tsx # 決済完了・PDFダウンロード
-│   └── api/
-│       ├── generate/route.ts     # OpenAIでニッチ生成
-│       ├── purchase/route.ts     # Stripe Checkoutセッション作成
-│       ├── webhook/route.ts      # Stripe Webhook（PDF生成トリガー）
-│       └── pdf/route.ts          # PDFダウンロードURL取得
-├── lib/
-│   ├── supabase.ts               # Supabaseクライアント
-│   ├── stripe.ts                 # Stripe操作
-│   ├── openai.ts                 # ニッチ生成・スコアリング・詳細レポート
-│   ├── pdf.tsx                   # PDFレンダリング（React PDF）
-│   ├── scoring.ts                # スコア計算ロジック（公開式と完全一致）
-│   └── schema.sql                # SupabaseのSQLスキーマ
-├── types/
-│   └── index.ts                  # 全型定義 + スコア計算式定数
-├── .env.local.example            # 環境変数テンプレート
-└── package.json
-```
+ユーザーがビジネスアイデアを入力すると、
+市場性・競争・収益性・実行可能性などの観点からスコアリングし、
+改善方向まで提示します。
 
 ---
 
-## セットアップ手順
+## ■ 背景
 
-### 1. 依存関係インストール
-
-```bash
-npm install
-```
-
-### 2. Supabaseのセットアップ
-
-1. [supabase.com](https://supabase.com) でプロジェクト作成
-2. SQL Editorで `lib/schema.sql` を実行
-3. Storage → New bucket → `pdf-reports`（Private）を作成
-4. Project Settings → API からキーを取得
-
-### 3. Stripeのセットアップ
-
-1. [stripe.com](https://stripe.com) でアカウント作成
-2. テストモードで秘密鍵・公開鍵を取得
-3. Webhookエンドポイントを追加：
-   - URL: `https://yourdomain.com/api/webhook`
-   - イベント: `checkout.session.completed`
-4. Webhook Secretをコピー
-
-### 4. 環境変数設定
-
-```bash
-cp .env.local.example .env.local
-# .env.local を編集して各APIキーを設定
-```
-
-### 5. ローカル起動
-
-```bash
-npm run dev
-# http://localhost:3000
-```
-
-### 6. Stripeローカルテスト（Webhook）
-
-```bash
-# Stripe CLIインストール後
-stripe listen --forward-to localhost:3000/api/webhook
-```
+多くのアイデアは「なんとなく良さそう」で判断されがちですが、
+本サービスはそれを構造的に分解し、意思決定を支援することを目的としています。
 
 ---
 
-## デプロイ（Vercel推奨）
+## ■ 主な機能
 
-```bash
-# Vercel CLIでデプロイ
-npx vercel --prod
-
-# または vercel.com のダッシュボードからGitHubリポジトリを接続
-# 環境変数は Vercel Dashboard → Settings → Environment Variables で設定
-```
-
-**重要：** デプロイ後に `.env.local.example` の `NEXT_PUBLIC_APP_URL` を本番URLに変更してください。
+* ビジネスアイデアのスコア評価（100点満点）
+* 5軸分析（市場性 / 競争 / 収益性 / 実行難易度 / AI代替耐性）
+* 改善方向の提示
+* 収益シミュレーション
+* PDF出力（レポート化）
 
 ---
 
-## スコア計算式（UI公開版と完全一致）
+## ■ 技術スタック
 
-```
-総合スコア = 需要温度×45% + (100-競合密度)×35% + (100-実装難易度)×20%
-```
-
-| スコア | 計算要素 |
-|--------|---------|
-| 需要温度 | Trendsの方向(上昇+40/横ばい+20/下降+5) + 検索量代理(0-30) + 悩みの強さ(0-30) |
-| 競合密度 | 有料SaaS数 × 10 + 調整値（無料コンテンツ多→減点） |
-| 実装難易度 | ベース20 + API依存(+25) + 法規制(+35) + MVP日数換算 |
-
-計算ロジックの詳細は `lib/scoring.ts` を参照。
+* Next.js
+* TypeScript
+* Vercel（デプロイ）
+* OpenAI API（分析ロジック）
 
 ---
 
-## 免責・法務注意事項
+## ■ URL
 
-- スコア・売上推定はすべて**仮定ベースの推定値**。精度を保証しない。
-- 「投資助言ではない」旨をPDFおよびUI上に明記済み。
-- Google Trends等の利用はAPI/公開データのみ使用。スクレイピングは不使用。
-- 競合情報は概算（最大10件）。網羅的ではない。
-- PDFには出典・推定条件・免責が自動挿入される。
+https://bizrate-mode.vercel.app/
 
 ---
 
-## β版（MVP後に追加予定）
+## ■ 今後の改善
 
-- [ ] 候補の保存・比較（最大10件）
-- [ ] 生成履歴
-- [ ] 共有リンク（結果を友達に見せる）
-- [ ] Supabase Auth（メールログイン）
-- [ ] SerpAPI連携（競合密度の精度向上）
+* スコアの根拠をデータベース連携で強化
+* 比較診断機能の追加
+* ユーザー履歴の可視化
 
 ---
 
-## トラブルシューティング
+## ■ 学び
 
-**Q: PDF生成が遅い**  
-A: OpenAI APIの呼び出し + @react-pdf/renderer のレンダリングで30〜60秒かかります。成功ページでポーリング中です。
-
-**Q: Webhookが届かない**  
-A: StripeダッシュボードでWebhookのログを確認。ngrokやStripe CLIでローカルテスト可能。
-
-**Q: `@react-pdf/renderer` ビルドエラー**  
-A: `next.config.js` の `serverComponentsExternalPackages` に追加済みです。Node.js v18以上が必要。
-=======
-# bizrate
-AIビジネス評価ツール
->>>>>>> 3e264068fff7516c974f6a8a4c21ab5b1bf121f8
+AIを活用することで開発速度は大きく向上する一方、
+内部構造の理解が不十分だとバグの特定が難しくなることを実感しました。
+この経験から、基礎的なプログラミング理解の重要性を学びました。
