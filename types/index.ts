@@ -3,6 +3,7 @@
 // ========================================
 
 export interface DiagnosisInput {
+  targetCustomer?: string
   businessSummary: string
   valueProposition: string
   salesChannel: string

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Document, Page, Text, View, StyleSheet, renderToBuffer } from '@react-pdf/renderer'
 import type { DiagnosisInput, DiagnosisResult } from '@/types'
-import { SCORE_FORMULA_DISPLAY, SCORE_WEIGHTS_DEFAULT, SCORE_LABELS, DISCLAIMER } from '@/types'
+import { SCORE_FORMULA_DISPLAY, SCORE_WEIGHTS, SCORE_LABELS, DISCLAIMER } from '@/types'
 
 const styles = StyleSheet.create({
   page: { fontFamily: 'Helvetica', fontSize: 10, paddingTop: 40, paddingBottom: 50, paddingHorizontal: 44, backgroundColor: '#FAFAFA', color: '#1a1a1a' },
@@ -74,7 +74,7 @@ export function generateDiagnosisPdf(
           <View style={styles.infoBox}>
             <Text style={styles.infoText}>{input.businessSummary}</Text>
           </View>
-          {[['想定顧客', input.targetCustomer], ['提供価値', input.valueProposition], ['価格帯', input.priceRange], ['販売チャネル', input.salesChannel]].map(([k, v]) => (
+          {[['提供価値', input.valueProposition], ['希望価格', input.currentPrice || '未設定'], ['販売チャネル', input.salesChannel]].map(([k, v]) => (
             <View key={k} style={styles.row}>
               <Text style={[styles.cellBold, { width: 80 }]}>{k}</Text>
               <Text style={styles.cell}>{v}</Text>
@@ -102,7 +102,7 @@ export function generateDiagnosisPdf(
             </View>
             <View style={{ flex: 1, backgroundColor: '#fff5f5', borderRadius: 4, padding: 8, borderLeftWidth: 2, borderLeftColor: '#e11d48' }}>
               <Text style={{ fontSize: 8, color: '#666', marginBottom: 3 }}>構造的弱点</Text>
-              <Text style={{ fontSize: 9, color: '#333' }}>{result.structuralWeakness}</Text>
+              <Text style={{ fontSize: 9, color: '#333' }}>{result.bottleneck}</Text>
             </View>
           </View>
           {/* 計算式 */}
@@ -117,7 +117,7 @@ export function generateDiagnosisPdf(
           {scoreOrder.map(key => {
             const bd = result.scoreBreakdown[key]
             const color = SCORE_COLORS_PDF[key] || '#888'
-            const winfo = SCORE_WEIGHTS_DEFAULT[key as keyof typeof SCORE_WEIGHTS_DEFAULT]
+            const winfo = SCORE_WEIGHTS[key as keyof typeof SCORE_WEIGHTS]
             return (
               <View key={key} style={{ marginBottom: 12, padding: 8, backgroundColor: '#f9f9f9', borderRadius: 4 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
@@ -146,10 +146,9 @@ export function generateDiagnosisPdf(
           <Text style={styles.sectionTitle}>4. 金銭系指標</Text>
           <Text style={{ fontSize: 8, color: '#888', marginBottom: 8 }}>★少ない=達成しやすい。「確率」ではなく難易度の目安です。</Text>
           {[
-            ['月3万到達難易度', '★'.repeat(result.moneyMetrics.monthly30k) + '☆'.repeat(5 - result.moneyMetrics.monthly30k), result.moneyMetrics.monthly30kReason],
-            ['月10万到達難易度', '★'.repeat(result.moneyMetrics.monthly100k) + '☆'.repeat(5 - result.moneyMetrics.monthly100k), result.moneyMetrics.monthly100kReason],
-            ['初月黒字化', result.moneyMetrics.firstMonthProfitable, result.moneyMetrics.firstMonthReason],
-            ['MVP制作難易度', '★'.repeat(result.moneyMetrics.mvpDifficulty) + '☆'.repeat(5 - result.moneyMetrics.mvpDifficulty), result.moneyMetrics.mvpReason],
+            ['総合スコア', String(result.scores.total) + ' / 100', result.summary],
+            ['ボトルネック', '', result.bottleneck],
+            ['構造的強み', '', result.structuralStrength],
           ].map(([label, val, reason]) => (
             <View key={label} style={[styles.row, { paddingVertical: 8 }]}>
               <Text style={[styles.cellBold, { width: 90 }]}>{label}</Text>
