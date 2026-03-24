@@ -1,3 +1,5 @@
+﻿export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { runDiagnosis } from '@/lib/openai'
 import { createServiceClient } from '@/lib/supabase'
@@ -315,3 +317,4 @@ export async function POST(req: NextRequest) {
     }, { status: 500 })
   }
 }
+

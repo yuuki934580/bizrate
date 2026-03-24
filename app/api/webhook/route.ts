@@ -1,3 +1,5 @@
+﻿export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { addCredits, addGuestCredits } from '@/lib/credits'
@@ -52,3 +54,4 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ received: true })
 }
+

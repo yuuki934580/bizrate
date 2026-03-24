@@ -1,3 +1,5 @@
+﻿export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createCreditCheckoutSession } from '@/lib/stripe'
 import { z } from 'zod'
@@ -36,3 +38,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: '決済の開始に失敗しました' }, { status: 500 })
   }
 }
+
